@@ -1,0 +1,14 @@
+.jexcel_content{
+    background-color: #fafafa !important;
+    border: none !important;
+}
+
+.jexcel_content tr td{
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+}
+
+.jexcel_content tr th{
+    box-shadow: none !important;
+    border: 1px solid #d3d3d3 !important;
+}
