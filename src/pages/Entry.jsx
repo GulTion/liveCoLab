@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignIn from '../components/SignIn';
 import SignUp from '../components/SignUp';
 import Chat from '../components/Chat'; // your Chat component
+import App from '../App';
 
 export default function Entry() {
   return (
@@ -17,6 +18,8 @@ export default function Entry() {
 
         {/* Chat at "/chat" */}
         <Route path="/chat" element={<Chat />} />
+
+        <Router path="/project" element={<App/>}></Router>
 
         {/* 404 fallback */}
         <Route path="*" element={<div>Not Found</div>} />
