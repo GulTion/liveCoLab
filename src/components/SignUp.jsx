@@ -1,8 +1,8 @@
 // src/components/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-const SERVER_URL = 'http://localhost:5000'; // adjust if needed
+import { SERVER_URL } from '../utils/auth';
+// const SERVER_URL = 'http://192.168.244.12:8080'; // adjust if needed
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -26,9 +26,11 @@ export default function SignUp() {
       });
       const data = await res.json();
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         // Store username locally
         localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userName', username);
+
 
         // Navigate to chat
         navigate('/project');
