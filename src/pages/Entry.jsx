@@ -1,8 +1,8 @@
 // Example router (Entry.js or App.js)
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Signin from '../components/Signin';
-import Signup from '../components/Signup';
+import Signin from '../components/SignIn';
+import Signup from '../components/SignUp';
 import Chat from '../components/Chat'; // your Chat component
 import App from '../App';
 import Dashboard from '../components/Dashboard';

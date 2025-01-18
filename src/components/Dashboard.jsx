@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, TextField, Typography, Box, Grid, ThemeProvider, createTheme } from '@mui/material';
+import { SERVER_URL } from '../utils/auth';
 
 const theme = createTheme({
   palette: {
@@ -24,11 +25,39 @@ const theme = createTheme({
 
 function Dashboard() {
   const navigate = useNavigate();
+
+
+
   const [workspaces, setWorkspaces] = useState([
-    { id: 1, name: 'Workspace 1' },
-    { id: 2, name: 'Workspace 2' },
-    { id: 3, name: 'Workspace 3' },
+
   ]);
+
+  // localStorage.setItem('userId', data.userId);
+
+
+  useEffect(()=>{
+ try {
+      fetch(`${SERVER_URL}/api/projects/userId/${localStorage.getItem('userId')}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+  
+      }).then(e=>e.json()).then(async e=>{
+    
+        setWorkspaces(e)
+
+      });
+
+
+
+
+  
+ 
+
+      
+    } catch (err) {
+      setError('Server error');
+    }
+  },[])
 
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [newProjectName, setNewProjectName] = useState('');
@@ -39,14 +68,28 @@ function Dashboard() {
         id: workspaces.length + 1,
         name: `${newProjectName}: ${newWorkspaceName}`,
       };
-      setWorkspaces([...workspaces, newWorkspace]);
+
+      fetch(`${SERVER_URL}/api/projects`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:JSON.stringify({projectName:newProjectName, userId:localStorage.getItem('userId')})
+  
+      }).then(e=>e.json()).then(async e=>{
+    
+        // setWorkspaces(e)
+      setWorkspaces(k=>[...k, e]);
       setNewWorkspaceName('');
       setNewProjectName('');
+
+      });
+
+
+  
     }
   };
 
   const handleVisitWorkspace = (workspaceName) => {
-    navigate('/project/12345');
+    navigate(`/project/${workspaceName}`);
   };
 
   return (
@@ -122,7 +165,7 @@ function Dashboard() {
               {workspaces.length > 0 ? (
                 workspaces.map((workspace) => (
                   <Card
-                    key={workspace.id}
+                    key={workspace.projectId}
                     sx={{
                       marginBottom: 2,
                       padding: 2,
@@ -134,12 +177,12 @@ function Dashboard() {
                     }}
                   >
                     <Typography variant="body1" color="text.primary">
-                      {workspace.name}
+                      {workspace.projectName}
                     </Typography>
                     <Button
                       variant="outlined"
                       color="secondary"
-                      onClick={() => handleVisitWorkspace(workspace.name)}
+                      onClick={() => handleVisitWorkspace(workspace.projectId)}
                     >
                       Visit
                     </Button>
