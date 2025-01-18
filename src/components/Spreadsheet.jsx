@@ -47,6 +47,8 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
       toolbar: toolbar,
       data: spreadsheetData,
       minDimensions: [4, 4],
+      columnSorting: true,
+      columnFilters: true,
       allowManualInsertRow: true,
       allowManualInsertColumn: true,
       onchange: (instance) => {
