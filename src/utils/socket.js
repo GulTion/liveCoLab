@@ -17,6 +17,10 @@ document.livecolab = {
     sendMessage:function emit(message){
         this.io.emit("send-message", {...this.info, message});
     },
+    setComment:function comment(mess){
+       
+    },
+    setConnectedUsers:()=>{},
 
     init:function init(){
 
@@ -25,22 +29,34 @@ document.livecolab = {
           });
 
           this.pid = getProjectIdFromUrl(document.location.pathname)
-          this.info = { roomId:this.pid , username:Math.random() }
+          this.info = { roomId:this.pid , username:localStorage.getItem('userName') }
           this.io.emit('join-room', this.info);
+          this.io.on("user-joined", (data)=>{
+            this.setConnectedUsers(d=>[...d, {username:data.username, role:"editor"}])
+                console.log(data);
+                
+          });
           this.io.on("receive-message", (data)=>{
             let mess = data.message;
-            console.log(mess);
+      
             
             switch(mess.type){
                 case "POINT":
-                    console.log("HERE");
-                    
+            
                     this.setSpreadsheetData(d => {
                         const updatedData = _.cloneDeep(d);
                         updatedData[parseInt(mess.y)][parseInt(mess.x)] = mess.value;
                         return updatedData;
                     
                     });
+                    break;
+
+                case "BULK":
+                    this.setSpreadsheetData([...mess.data]);
+                    break;
+                
+                case "COMMENT_TEXT":
+                    this.setComment(e=>([...e, {text:mess.text, sender:mess.userName}]))
                     break;
 
                 default:

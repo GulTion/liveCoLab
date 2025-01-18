@@ -70,12 +70,15 @@ function Chat() {
   const [messages, setMessages] = useState([
     { text: "Welcome to the chat!", sender: "System" },
   ]);
+
+  document.livecolab.setComment = setMessages;
   const [inputValue, setInputValue] = useState("");
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
     // Add to local state
-    setMessages((prev) => [...prev, { text: inputValue.trim(), sender: "You" }]);
+    document.livecolab.sendMessage({type:"COMMENT_TEXT", userName:localStorage.getItem('userName'), text:inputValue.trim()})
+    // setMessages((prev) => [...prev, { text: inputValue.trim(), sender: "You" }]);
     setInputValue("");
     // In a real app, you'd emit to a server via Socket.IO, etc.
   };
@@ -183,12 +186,14 @@ export default function App() {
 
   // Mock connected users
   const [connectedUsers, setConnectedUsers] = useState([
-    { username: "Alice", role: "Admin" },
-    { username: "Bob", role: "Viewer" },
+    // { username: "Alice", role: "Admin" },
+    // { username: "Bob", role: "Viewer" },
   ]);
 
   // Link to `setSpreadsheetData` in livecolab
   document.livecolab.setSpreadsheetData = setSpreadsheetData;
+  document.livecolab.setConnectedUsers = setConnectedUsers;
+
 
   // Chart Customization
   const [chartOptions, setChartOptions] = useState({
