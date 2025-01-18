@@ -30,7 +30,7 @@ export default function SignIn() {
         localStorage.setItem('username', username);
 
         // Navigate to chat (no room ID here!)
-        navigate('/chat');
+        navigate('/Dashboard');
       } else {
         setError(data.message || 'Login failed');
       }

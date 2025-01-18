@@ -1,20 +1,22 @@
 // Example router (Entry.js or App.js)
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SignIn from '../components/SignIn';
-import SignUp from '../components/SignUp';
+import Signin from '../components/Signin';
+import Signup from '../components/Signup';
 import Chat from '../components/Chat'; // your Chat component
 import App from '../App';
+import Dashboard from '../components/Dashboard';
 
 export default function Entry() {
   return (
     <Router>
       <Routes>
         {/* Sign In at "/" */}
-        <Route path="/" element={<SignIn />} />
+        <Route path="/" element={<Signin />} />
 
         {/* Sign Up at "/signup" */}
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/Dashboard" element={<Dashboard/>}/>
+        <Route path="/signup" element={<Signup />} />
 
         {/* Chat at "/chat" */}
         <Route path="/chat" element={<Chat />} />

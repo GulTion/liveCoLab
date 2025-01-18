@@ -26,6 +26,7 @@ import ChartCustomizationPanel from "./components/ChartCustomizationPanel";
 // import { Socket } from "socket.io-client";
 
 import "./utils/socket";
+import Dashboard from "./components/Dashboard";
 document.livecolab.init();
 
 /* -----------------------------------------------
