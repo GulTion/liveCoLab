@@ -16,12 +16,6 @@ import ChartCustomizationPanel from './components/ChartCustomizationPanel';
 const theme = createTheme();
 
 function App() {
-  const [data, setData] = useState([
-    ['10', '5', '8', '12'],
-    ['3', '7', '6', '9'],
-    ['15', '11', '9', '7'],
-  ]);
-
   const [spreadsheetData, setSpreadsheetData] = useState([
     ['10', '5', '8', '12'],
     ['3', '7', '6', '9'],
@@ -31,7 +25,6 @@ function App() {
   // Chart Customization State
   const [chartOptions, setChartOptions] = useState({
     theme: 'Flourish: Apex',
-    chartType: 'Combo: Lines & columns (stacked)',
     axisType: 'Single',
     numberOfComboLines: 1,
     gridMode: 'Single chart',
@@ -39,16 +32,22 @@ function App() {
     aspectDesktop: 1,
     aspectMobile: 1,
     breakpoint: 500,
-    labelColumn: 'A',
-    valueColumns: ['B', 'C'],
+    labelColumn: 'A', // Common label column
+    charts: [
+      {
+        chartType: 'line',
+        valueColumn: 'B',
+        color: '#1f78b4', // Default color
+      },
+    ], // Initial chart
   });
 
   const handleSpreadsheetDataChange = (newData) => {
     setSpreadsheetData(newData);
-    setData(newData);
   };
 
   const handleChartOptionChange = (newOptions) => {
+    console.log("newOptions",newOptions);
     setChartOptions(newOptions);
   };
 
@@ -69,7 +68,7 @@ function App() {
           <Grid item xs={12} md={6}>
             {/* Chart taking the right half */}
             <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-              <ChartDisplay data={data} options={chartOptions} />
+              <ChartDisplay data={spreadsheetData} options={chartOptions} />
             </Paper>
             {/* Chart Customization Panel below the Chart */}
             <Paper elevation={3} sx={{ p: 2 }}>

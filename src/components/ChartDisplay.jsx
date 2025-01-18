@@ -16,36 +16,39 @@ const ChartDisplay = ({ data, options }) => {
 
     const myChartRef = chartRef.current.getContext('2d');
 
+
+
     // Prepare data based on selected columns
-    const labels = options.labelColumn
-      ? data.map((row) => row[options.labelColumn.charCodeAt(0) - 65] || '')
-      : data.map((_, index) => `Row ${index + 1}`);
-
-    const values = options.valueColumns
-      ? options.valueColumns.map((col) =>
-          data.map((row) => parseFloat(row[col.charCodeAt(0) - 65] || 0))
-        )
-      : [
-          data.map((row) =>
-            row.reduce((sum, cell) => sum + parseFloat(cell || 0), 0)
-          ),
-        ];
-
-    const chartData = {
-      labels: labels,
-      datasets: values.map((valueSet, index) => ({
-        label: options.valueColumns
-          ? `Value ${options.valueColumns[index]}`
-          : 'Spreadsheet Data',
-        data: valueSet,
-        backgroundColor: theme.palette.primary.main,
-        borderColor: theme.palette.primary.dark,
-        borderWidth: 1,
-      })),
+    const getColumnIndex = (col) => {
+      let index = 0;
+      for (let i = 0; i < col.length; i++) {
+        index = index * 26 + (col.charCodeAt(i) - 64); // "A" is 65 in ASCII
+      }
+      return index - 1; // Adjust to 0-based index
     };
 
+    // Get the common label column data
+    const labelColumnIndex = getColumnIndex(options.labelColumn);
+    
+    const labels = data.map((row) => row[labelColumnIndex] || '');
+    console.log({data, options });
+    
+
+    // Prepare datasets based on options.charts
+    const datasets = options.charts.map((chart, index) => ({
+      label: `Chart ${index + 1} (${chart.chartType})`, // Label based on chart type and index
+      data: data.map((row) => parseFloat(row[getColumnIndex(chart.valueColumn)] || 0)),
+      backgroundColor: chart.color,
+      borderColor: chart.color,
+      borderWidth: 1,
+      type: chart.chartType, // Use the chart type specified in options
+    }));
+    console.log({datasets});
+    
+
+
     // Apply chart options to the chart
-    const updatedOptions = {
+    const chartOptions = {
       scales: {
         y: {
           beginAtZero: true,
@@ -54,20 +57,19 @@ const ChartDisplay = ({ data, options }) => {
       plugins: {
         title: {
           display: true,
-          text: `Chart Theme: ${options.theme}`,
+          text: `Chart Data`, // You can customize the title
         },
       },
     };
+    console.log(datasets);
+    
 
-    // Example: Change the chart type
-    if (options.chartType === 'Combo: Lines & columns (stacked)') {
-      chartData.datasets[0].type = 'line';
-    }
+
 
     chartInstance.current = new Chart(myChartRef, {
       type: 'bar', // You can change this based on options
-      data: chartData,
-      options: updatedOptions,
+      data: {datasets, labels},
+      options: chartOptions,
     });
 
     return () => {
@@ -85,3 +87,5 @@ const ChartDisplay = ({ data, options }) => {
 };
 
 export default ChartDisplay;
+
+
