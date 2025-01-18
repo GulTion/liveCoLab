@@ -29,18 +29,21 @@ document.livecolab = {
           this.io.emit('join-room', this.info);
           this.io.on("receive-message", (data)=>{
             let mess = data.message;
-            console.log(mess);
+      
             
             switch(mess.type){
                 case "POINT":
-                    console.log("HERE");
-                    
+            
                     this.setSpreadsheetData(d => {
                         const updatedData = _.cloneDeep(d);
                         updatedData[parseInt(mess.y)][parseInt(mess.x)] = mess.value;
                         return updatedData;
                     
                     });
+                    break;
+
+                case "BULK":
+                    this.setSpreadsheetData([...mess.data]);
                     break;
 
                 default:

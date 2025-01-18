@@ -2,13 +2,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-const SERVER_URL = 'http://localhost:5000'; // adjust if needed
+const SERVER_URL = 'hhttp://10.1.38.153:8080/'; // adjust if needed
 
 export default function SignIn() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+
 
   const [error, setError] = useState('');
 
@@ -18,7 +20,7 @@ export default function SignIn() {
     setError('');
 
     try {
-      const res = await fetch(`${SERVER_URL}/login`, {
+      const res = await fetch(`${SERVER_URL}/api/users/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -27,10 +29,10 @@ export default function SignIn() {
 
       if (res.ok) {
         // Store username in localStorage (or however you want to track user)
-        localStorage.setItem('username', username);
+        localStorage.setItem('userId', data.userId);
 
         // Navigate to chat (no room ID here!)
-        navigate('/chat');
+        navigate('/project');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -65,6 +67,10 @@ export default function SignIn() {
               required
             />
           </div>
+
+     
+
+         
 
           <button type="submit" style={styles.button}>Sign In</button>
         </form>

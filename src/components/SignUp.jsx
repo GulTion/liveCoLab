@@ -9,6 +9,7 @@ export default function SignUp() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
 
   const [error, setError] = useState('');
 
@@ -18,19 +19,19 @@ export default function SignUp() {
     setError('');
 
     try {
-      const res = await fetch(`${SERVER_URL}/signup`, {
+      const res = await fetch(`${SERVER_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ userName:username,email, password }),
       });
       const data = await res.json();
 
       if (res.status === 201) {
         // Store username locally
-        localStorage.setItem('username', username);
+        localStorage.setItem('userId', data.userId);
 
         // Navigate to chat
-        navigate('/chat');
+        navigate('/project');
       } else {
         setError(data.message || 'Sign up failed');
       }
@@ -62,6 +63,17 @@ export default function SignUp() {
               style={styles.input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Email</label>
+            <input
+              type="email"
+              style={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
