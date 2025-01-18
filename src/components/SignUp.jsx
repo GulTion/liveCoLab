@@ -33,7 +33,7 @@ export default function SignUp() {
 
 
         // Navigate to chat
-        navigate('/project');
+        navigate('/dashboard');
       } else {
         setError(data.message || 'Sign up failed');
       }
