@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import {
   Accordion,
@@ -30,12 +31,15 @@ const getColumnLetters = (numCols) =>
     return colName;
   });
 
-// Available chart types
+// --- Updated Chart Types ---
 const chartTypes = [
   { value: 'line', label: 'Line' },
   { value: 'bar', label: 'Bar' },
   { value: 'scatter', label: 'Scatter' },
-  // Add more chart types here
+  { value: 'heatmap', label: 'Heatmap' },
+  { value: 'scatter3d', label: '3D Scatter' }, // Add 3D chart options
+  { value: 'surface', label: '3D Surface' },
+  // Add more chart types here (e.g., pie, area, etc.)
 ];
 
 // --- Reusable Components ---
@@ -66,6 +70,8 @@ const ChartCustomizationPanel = ({
         chartType: 'line',
         valueColumn: 'B',
         color: '#1f78b4', // Default color
+        // 3D chart options (add more as needed)
+        valueColumnZ: null,
       },
     ], // Initial chart
   });
@@ -87,15 +93,26 @@ const ChartCustomizationPanel = ({
   const handleChartChange = (index, field, value) => {
     const updatedCharts = [...options.charts];
     updatedCharts[index][field] = value;
+
+    // Reset 3D chart options if chart type is not 3D
+    if (
+      field === 'chartType' &&
+      value !== 'scatter3d' &&
+      value !== 'surface'
+    ) {
+      updatedCharts[index].valueColumnZ = null;
+    }
+
     handleOptionChange('charts', updatedCharts);
   };
 
   // Add a new chart
   const handleAddChart = () => {
     const newChart = {
-      chartType: 'line', // Default chart type
-      valueColumn: 'B', // Default value column
-      color: '#33a02c', // Default color for the new chart
+      chartType: 'line',
+      valueColumn: 'B',
+      color: '#33a02c',
+      valueColumnZ: null,
     };
     handleOptionChange('charts', [...options.charts, newChart]);
   };
@@ -168,16 +185,16 @@ const ChartCustomizationPanel = ({
                 </Select>
               </FormControl>
 
-              {/* Value Column */}
+              {/* Value Column (for all chart types) */}
               <FormControl fullWidth size="small" sx={{ mb: 2 }}>
                 <InputLabel id={`value-column-label-${index}`}>
-                  Value Column
+                  Value Column (X-Axis)
                 </InputLabel>
                 <Select
                   labelId={`value-column-label-${index}`}
                   id={`value-column-${index}`}
                   value={chart.valueColumn}
-                  label="Value Column"
+                  label="Value Column (X-Axis)"
                   onChange={(e) =>
                     handleChartChange(index, 'valueColumn', e.target.value)
                   }
@@ -189,6 +206,60 @@ const ChartCustomizationPanel = ({
                   ))}
                 </Select>
               </FormControl>
+
+              {/* Z-Column Selection (for 3D charts) */}
+              {chart.chartType === 'scatter3d' && (
+                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                  <InputLabel id={`value-column-z-label-${index}`}>
+                    Z-Axis Column
+                  </InputLabel>
+                  <Select
+                    labelId={`value-column-z-label-${index}`}
+                    id={`value-column-z-${index}`}
+                    value={chart.valueColumnZ || ''}
+                    label="Z-Axis Column"
+                    onChange={(e) =>
+                      handleChartChange(index, 'valueColumnZ', e.target.value)
+                    }
+                  >
+                    <MenuItem value={''}>
+                      <em>None</em>
+                    </MenuItem>
+                    {columnLetters.map((col) => (
+                      <MenuItem key={col} value={col}>
+                        {col}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+
+              {/* Heatmap Z-Column Selection */}
+              {chart.chartType === 'heatmap' && (
+                <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                  <InputLabel id={`heatmap-z-column-label-${index}`}>
+                    Z-Column (Heatmap)
+                  </InputLabel>
+                  <Select
+                    labelId={`heatmap-z-column-label-${index}`}
+                    id={`heatmap-z-column-${index}`}
+                    value={chart.heatmapZColumn || ''} // Should be able to handle null
+                    label="Z-Column (Heatmap)"
+                    onChange={(e) =>
+                      handleChartChange(index, 'heatmapZColumn', e.target.value)
+                    }
+                  >
+                    <MenuItem value={''}>
+                      <em>None</em>
+                    </MenuItem>
+                    {columnLetters.map((col) => (
+                      <MenuItem key={col} value={col}>
+                        {col}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
 
               {/* Color Picker */}
               <TextField
