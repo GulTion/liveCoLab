@@ -27,6 +27,7 @@ import ChartCustomizationPanel from "./components/ChartCustomizationPanel";
 
 import "./utils/socket";
 import Dashboard from "./components/Dashboard";
+import { useNavigate } from "react-router-dom";
 document.livecolab.init();
 
 /* -----------------------------------------------
@@ -184,6 +185,8 @@ export default function App() {
     ["15", "11", "9", "7"],
   ]);
 
+  const navigate = useNavigate();
+
   // Mock connected users
   const [connectedUsers, setConnectedUsers] = useState([
     // { username: "Alice", role: "Admin" },
@@ -243,6 +246,11 @@ export default function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Spreadsheet and Chart
           </Typography>
+
+          <Button variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={()=>navigate("/Dashboard")}>
+            DashBoard
+          </Button>
+          
           <Tabs
             value={value}
             onChange={handleChange}

@@ -103,7 +103,7 @@ function Dashboard() {
           gutterBottom
           sx={{ color: '#fff' }}
         >
-          Welcome to the Dashboard!
+          Welcome {localStorage.getItem('userName')} !
         </Typography>
 
         <Grid container spacing={4}>
