@@ -17,7 +17,12 @@ import Divider from "@mui/material/Divider";
 import Spreadsheet from "./components/Spreadsheet";
 import ChartDisplay from "./components/ChartDisplay";
 import ChartCustomizationPanel from "./components/ChartCustomizationPanel";
+import { useNavigate, useParams } from 'react-router-dom';
+// import { Socket } from "socket.io-clien/t";
 
+import "./utils/socket"
+
+document.livecolab.init();
 // Create a theme instance.
 const theme = createTheme();
 
@@ -37,12 +42,19 @@ function TabPanel(props) {
   );
 }
 
+
+
 function App() {
   const [spreadsheetData, setSpreadsheetData] = useState([
     ["10", "5", "8", "12"],
     ["3", "7", "6", "9"],
     ["15", "11", "9", "7"],
   ]);
+
+  document.livecolab.setSpreadsheetData=setSpreadsheetData;
+
+
+  
 
   // Chart Customization State
   const [chartOptions, setChartOptions] = useState({

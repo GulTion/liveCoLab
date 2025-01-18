@@ -18,9 +18,10 @@ export default function Entry() {
 
         {/* Chat at "/chat" */}
         <Route path="/chat" element={<Chat />} />
+        {/* <Route path="/chat" element={<Chat />} /> */}
 
-        <Router path="/project" element={<App/>}></Router>
 
+         <Route path="/project/:id" element={<App/>} />
         {/* 404 fallback */}
         <Route path="*" element={<div>Not Found</div>} />
       </Routes>

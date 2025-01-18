@@ -52,7 +52,11 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
       allowManualInsertRow: true,
       allowManualInsertColumn: true,
       filters:true,
-      onchange: (instance) => {
+      onchange: (i,td, x,y,value) => {
+        console.log(x);
+
+        document.livecolab.sendMessage({x,y,value, type:"POINT"});
+        
         const data = spreadsheetRef.current.jspreadsheet.getData();
         onDataChange(data);
         // setSpreadsheetData(data);
