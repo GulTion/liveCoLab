@@ -2,7 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import jspreadsheet from 'jspreadsheet-ce';
 import 'jsuites/dist/jsuites.css';
 import 'jspreadsheet-ce/dist/jspreadsheet.css';
-import '../styles.css';
+import '../styles.css'; // Assuming you have some custom styles
+
+import StatsTable from './StatsTable'; // Import the StatsTable component
+
+import '@mui/material/styles';
 
 const Spreadsheet = ({ onDataChange }) => {
   const spreadsheetRef = useRef(null);
@@ -13,18 +17,50 @@ const Spreadsheet = ({ onDataChange }) => {
   ]);
 
   useEffect(() => {
+    const toolbar = [
+
+   
+
+   
+
+      {
+        type: 'i',
+        content: 'IR',
+        onclick: () => {
+          spreadsheetRef.current.jspreadsheet.insertRow();
+          const data = spreadsheetRef.current.jspreadsheet.getData();
+        onDataChange(data);
+        setSpreadsheetData(data);
+        },
+        title: 'New Row'
+      },
+      {
+        type: 'i',
+        content: 'IC',
+        onclick: () => {
+          spreadsheetRef.current.jspreadsheet.insertColumn();
+          const data = spreadsheetRef.current.jspreadsheet.getData();
+        onDataChange(data);
+        setSpreadsheetData(data);
+        },
+        title: 'New Column'
+      },
+    ];
 
     const options = {
-      // toolbar: toolbar, // Pass the toolbar array here
+      toolbar: toolbar,
       data: spreadsheetData,
       minDimensions: [4, 4],
-      onchange: (...x) => {
-        console.log(x);
-        
-        const newData = spreadsheetRef.current.jspreadsheet.getData();
-        onDataChange(newData);
-        setSpreadsheetData(newData);
+      allowManualInsertRow: true,
+      allowManualInsertColumn: true,
+      onchange: (instance) => {
+        const data = spreadsheetRef.current.jspreadsheet.getData();
+        onDataChange(data);
+        setSpreadsheetData(data);
       },
+      columns: Array(spreadsheetData[0].length).fill({
+        readOnly: false,
+      }),
     };
 
     if (!spreadsheetRef.current.jspreadsheet) {
@@ -37,7 +73,12 @@ const Spreadsheet = ({ onDataChange }) => {
     }
   }, [spreadsheetData, onDataChange]);
 
-  return <div ref={spreadsheetRef} />;
+  return (
+    <div>
+      <div ref={spreadsheetRef} />
+      <StatsTable data={spreadsheetData} />
+    </div>
+  );
 };
 
 export default Spreadsheet;

@@ -12,6 +12,7 @@ import Spreadsheet from './components/Spreadsheet';
 import ChartDisplay from './components/ChartDisplay';
 import ChartCustomizationPanel from './components/ChartCustomizationPanel';
 
+
 // Create a theme instance.
 const theme = createTheme();
 
