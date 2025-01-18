@@ -8,20 +8,16 @@ import StatsTable from './StatsTable'; // Import the StatsTable component
 
 import '@mui/material/styles';
 
-const Spreadsheet = ({ onDataChange }) => {
+const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
   const spreadsheetRef = useRef(null);
-  const [spreadsheetData, setSpreadsheetData] = useState([
-    ['10', '5', '8', '12'],
-    ['3', '7', '6', '9'],
-    ['15', '11', '9', '7'],
-  ]);
+  // const [spreadsheetData, setSpreadsheetData] = useState([
+  //   ['10', '5', '8', '12'],
+  //   ['3', '7', '6', '9'],
+  //   ['15', '11', '9', '7'],
+  // ]);
 
   useEffect(() => {
     const toolbar = [
-
-   
-
-   
 
       {
         type: 'i',
@@ -30,7 +26,7 @@ const Spreadsheet = ({ onDataChange }) => {
           spreadsheetRef.current.jspreadsheet.insertRow();
           const data = spreadsheetRef.current.jspreadsheet.getData();
         onDataChange(data);
-        setSpreadsheetData(data);
+        // setSpreadsheetData(data);
         },
         title: 'New Row'
       },
@@ -41,7 +37,7 @@ const Spreadsheet = ({ onDataChange }) => {
           spreadsheetRef.current.jspreadsheet.insertColumn();
           const data = spreadsheetRef.current.jspreadsheet.getData();
         onDataChange(data);
-        setSpreadsheetData(data);
+        // setSpreadsheetData(data);
         },
         title: 'New Column'
       },
@@ -56,7 +52,7 @@ const Spreadsheet = ({ onDataChange }) => {
       onchange: (instance) => {
         const data = spreadsheetRef.current.jspreadsheet.getData();
         onDataChange(data);
-        setSpreadsheetData(data);
+        // setSpreadsheetData(data);
       },
       columns: Array(spreadsheetData[0].length).fill({
         readOnly: false,

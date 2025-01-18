@@ -63,7 +63,7 @@ function App() {
           <Grid item xs={12} md={6}>
             {/* Spreadsheet taking the left half */}
             <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-              <Spreadsheet onDataChange={handleSpreadsheetDataChange} />
+              <Spreadsheet spreadsheetData={spreadsheetData} onDataChange={handleSpreadsheetDataChange} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
