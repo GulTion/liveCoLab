@@ -1,0 +1,10 @@
+/* in your gridstack.min.css or a separate CSS file */
+.grid-stack-item-content {
+    cursor: default; 
+  }
+  
+  .drag-handle {
+    cursor: move; 
+    width: fit-content;
+    padding: 4px;
+  }

@@ -51,6 +51,7 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
       columnFilters: true,
       allowManualInsertRow: true,
       allowManualInsertColumn: true,
+      filters:true,
       onchange: (instance) => {
         const data = spreadsheetRef.current.jspreadsheet.getData();
         onDataChange(data);
@@ -72,10 +73,10 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
   }, [spreadsheetData, onDataChange]);
 
   return (
-    <div>
-      <div ref={spreadsheetRef} />
-      <StatsTable data={spreadsheetData} />
-    </div>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div ref={spreadsheetRef} style={{ marginBottom: '20px' }} /> {/* Add margin here */}
+    <StatsTable data={spreadsheetData} />
+  </div>
   );
 };
 
