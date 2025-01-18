@@ -1,10 +1,10 @@
-// src/components/SignIn.js
+// src/components/SignUp.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const SERVER_URL = 'http://localhost:5000'; // adjust if needed
 
-export default function SignIn() {
+export default function SignUp() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
@@ -13,26 +13,26 @@ export default function SignIn() {
   const [error, setError] = useState('');
 
   // Handle form submission
-  const handleSignIn = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const res = await fetch(`${SERVER_URL}/login`, {
+      const res = await fetch(`${SERVER_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
       const data = await res.json();
 
-      if (res.ok) {
-        // Store username in localStorage (or however you want to track user)
+      if (res.status === 201) {
+        // Store username locally
         localStorage.setItem('username', username);
 
-        // Navigate to chat (no room ID here!)
+        // Navigate to chat
         navigate('/chat');
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Sign up failed');
       }
     } catch (err) {
       setError('Server error');
@@ -41,9 +41,9 @@ export default function SignIn() {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Sign In</h2>
+      <h2 style={styles.title}>Sign Up</h2>
       <div style={styles.formCard}>
-        <form onSubmit={handleSignIn} style={styles.form}>
+        <form onSubmit={handleSignUp} style={styles.form}>
           <div style={styles.formGroup}>
             <label style={styles.label}>Username</label>
             <input
@@ -66,14 +66,14 @@ export default function SignIn() {
             />
           </div>
 
-          <button type="submit" style={styles.button}>Sign In</button>
+          <button type="submit" style={styles.button}>Sign Up</button>
         </form>
 
         {error && <p style={styles.error}>{error}</p>}
 
         <div style={styles.linkContainer}>
-          <span>Don't have an account?</span>
-          <Link to="/signup" style={styles.link}> Sign Up</Link>
+          <span>Already have an account?</span>
+          <Link to="/" style={styles.link}> Sign In</Link>
         </div>
       </div>
     </div>
@@ -121,7 +121,7 @@ const styles = {
     cursor: 'pointer',
     borderRadius: '4px',
     border: 'none',
-    backgroundColor: '#007BFF',
+    backgroundColor: '#28a745',
     color: '#fff',
     fontWeight: 'bold'
   },
