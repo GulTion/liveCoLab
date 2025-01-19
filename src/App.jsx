@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // MUI imports
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -27,8 +27,15 @@ import ChartCustomizationPanel from "./components/ChartCustomizationPanel";
 
 import "./utils/socket";
 import Dashboard from "./components/Dashboard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { SERVER_URL } from "./utils/auth";
 document.livecolab.init();
+
+function getProjectIdFromUrl(url) {
+  const parts = url.split('/');
+  const projectIdIndex = parts.indexOf('project') + 1;
+  return parts[projectIdIndex] || null; // Handle cases where the ID might be missing
+}
 
 /* -----------------------------------------------
    1) ConnectedUsers COMPONENT
@@ -174,31 +181,98 @@ function TabPanel(props) {
   );
 }
 
+
+
+const VersionSelector = ({spreadsheetData, chartOptions, setSpreadsheetData, setChartOptions}) => {
+  const [selectedVersion, setSelectedVersion] = useState(parseInt(localStorage.getItem("version")));
+  const [vlist, setV] = useState(Array.from({ length: parseInt(localStorage.getItem("latestVersion")) }, (_, i) => i+1 ))
+  const handleSelect = (version) => {
+    setSelectedVersion(version);
+    fetch(`${SERVER_URL}/api/commit-project/get-data`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      method:"POST",
+      body:JSON.stringify({
+        projectId:getProjectIdFromUrl(document.location.pathname),
+        version:version
+        
+      })
+    }).then(e=>e.json()).then(res=>{
+      setSpreadsheetData(JSON.parse(res.data));
+      setChartOptions(JSON.parse(res.metaData));
+      localStorage.setItem("version", version);
+      // localStorage.setItem("lastedVersion", res.lastedVersion);
+
+    })
+  };
+
+  const handleSave = ()=>{
+    fetch(`${SERVER_URL}/api/commit-project/`,{
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method:"POST",
+      
+      body:JSON.stringify({
+        projectId:getProjectIdFromUrl(document.location.pathname),
+        userId:localStorage.getItem("userId"),
+    
+        data:JSON.stringify(spreadsheetData),
+        metaData:JSON.stringify(chartOptions)
+        
+      })
+    }).then(e=>e.json()).then(res=>{
+      // setSpreadsheetData(JSON.parse(res.data));
+      // setChartOptions(JSON.parse(res.metaData));
+      setV(e=>[...e,res.version ]);
+
+      setSelectedVersion(res.version)
+
+      localStorage.setItem("version", res.version);
+
+    })
+  }
+
+  return (
+    <Box sx={{ textAlign: "center", padding: "20px" }}>
+      {/* Render the version buttons */}
+      <Button onClick={handleSave}>Commit</Button>
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
+        {vlist.map((version, index) => (
+          <Button
+            key={index}
+            variant={selectedVersion === version ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => handleSelect(version)}
+          >
+            Version {version}
+          </Button>
+        ))}
+      </Box>
+
+      {/* Display the selected version */}
+      <Typography variant="h6" color="text.secondary">
+        {selectedVersion ? `Selected Version: ${selectedVersion}` : "No version selected"}
+      </Typography>
+    </Box>
+  );
+};
+
+
+
 /* -----------------------------------------------
    4) MAIN APP
 ------------------------------------------------ */
 export default function App() {
   // Spreadsheet Data
   const [spreadsheetData, setSpreadsheetData] = useState([
-    ["10", "5", "8", "12"],
-    ["3", "7", "6", "9"],
-    ["15", "11", "9", "7"],
+    ["", "", "", ""],
+    ["", "", "", ""],
+    ["", "", "", ""],
   ]);
 
-  const navigate = useNavigate();
-
-  // Mock connected users
-  const [connectedUsers, setConnectedUsers] = useState([
-    // { username: "Alice", role: "Admin" },
-    // { username: "Bob", role: "Viewer" },
-  ]);
-
-  // Link to `setSpreadsheetData` in livecolab
-  document.livecolab.setSpreadsheetData = setSpreadsheetData;
-  document.livecolab.setConnectedUsers = setConnectedUsers;
-
-
-  // Chart Customization
   const [chartOptions, setChartOptions] = useState({
     theme: "Flourish: Apex",
     axisType: "Single",
@@ -218,6 +292,53 @@ export default function App() {
     ],
   });
 
+  document.livecolab.setChartOptions = setChartOptions;
+
+
+
+  
+
+  useEffect(()=>{
+    fetch(`${SERVER_URL}/api/commit-project/get-data`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      method:"POST",
+      body:JSON.stringify({
+        projectId:getProjectIdFromUrl(document.location.pathname),
+        version:parseInt(localStorage.getItem("version"))
+        
+      })
+    }).then(e=>e.json()).then(res=>{
+      setSpreadsheetData(JSON.parse(res.data));
+      setChartOptions(JSON.parse(res.metaData));
+      localStorage.setItem("version", res.version);
+      // localStorage.setItem("lastedVersion", res.lastedVersion);
+
+    })
+  }, []);
+  
+
+
+
+
+  const navigate = useNavigate();
+
+  // Mock connected users
+  const [connectedUsers, setConnectedUsers] = useState([
+    // { username: "Alice", role: "Admin" },
+    // { username: "Bob", role: "Viewer" },
+  ]);
+
+  // Link to `setSpreadsheetData` in livecolab
+  document.livecolab.setSpreadsheetData = setSpreadsheetData;
+  document.livecolab.setConnectedUsers = setConnectedUsers;
+
+
+  // Chart Customization
+
+
   // Track active tab
   const [value, setValue] = useState(0);
 
@@ -232,7 +353,7 @@ export default function App() {
 
   // Chart Options callback
   const handleChartOptionChange = (newOptions) => {
-    console.log("newOptions", newOptions);
+    document.livecolab.sendMessage({type:"CHART_OPTION", data:newOptions});
     setChartOptions(newOptions);
   };
 
@@ -307,6 +428,8 @@ export default function App() {
               {/* Chat below the chart & options */}
               <Chat />
             </TabPanel>
+           
+            <VersionSelector chartOptions={chartOptions} spreadsheetData={spreadsheetData} setChartOptions={setChartOptions}  setSpreadsheetData={setSpreadsheetData}/>
           </Container>
         </Box>
       </Box>

@@ -22,6 +22,8 @@ document.livecolab = {
     },
     setConnectedUsers:()=>{},
 
+    setChartOptions:()=>{},
+
     init:function init(){
 
         this.io = io(SERVER_URL, {
@@ -36,6 +38,10 @@ document.livecolab = {
                 console.log(data);
                 
           });
+
+          this.io.on("room-users", d=>{
+                this.setConnectedUsers(d.map(e=>({username:data.username, role:"editor"})))
+          })    
           this.io.on("receive-message", (data)=>{
             let mess = data.message;
       
@@ -58,6 +64,9 @@ document.livecolab = {
                 case "COMMENT_TEXT":
                     this.setComment(e=>([...e, {text:mess.text, sender:mess.userName}]))
                     break;
+
+                case "CHART_OPTION":
+                    this.setChartOptions(mess.data);
 
                 default:
                     break;

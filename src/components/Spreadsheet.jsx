@@ -21,7 +21,7 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
 
       {
         type: 'i',
-        content: 'New Row',
+        content: 'IR',
         onclick: () => {
           
           spreadsheetRef.current.jspreadsheet.insertRow();
@@ -32,21 +32,21 @@ const Spreadsheet = ({ spreadsheetData, onDataChange }) => {
         },
         title: 'New Row'
       },
-      // {
-      //   type: 'i',
-      //   content: 'IC',
-      //   onclick: () => {
-      //     spreadsheetRef.current.jspreadsheet.insertColumn();
-      //     const data = spreadsheetRef.current.jspreadsheet.getData();
-      //     console.log(data);
+      {
+        type: 'i',
+        content: 'IC',
+        onclick: () => {
+          spreadsheetRef.current.jspreadsheet.insertColumn();
+          const data = spreadsheetRef.current.jspreadsheet.getData();
+          console.log(data);
           
-      //     document.livecolab.sendMessage({data, type:"BULK"});
+          document.livecolab.sendMessage({data, type:"BULK"});
 
-      //   onDataChange(data);
-      //   // setSpreadsheetData(data);
-      //   },
-      //   title: 'New Column'
-      // },
+        onDataChange(data);
+        // setSpreadsheetData(data);
+        },
+        title: 'New Column'
+      },
     ];
 
     const options = {

@@ -43,7 +43,8 @@ function Dashboard() {
   
       }).then(e=>e.json()).then(async e=>{
     
-        setWorkspaces(e)
+        setWorkspaces(e);
+        // localStorage.setItem("latestVer")
 
       });
 
@@ -88,7 +89,8 @@ function Dashboard() {
     }
   };
 
-  const handleVisitWorkspace = (workspaceName) => {
+  const handleVisitWorkspace = (workspaceName, lv) => {
+    localStorage.setItem("latestVersion", lv);
     navigate(`/project/${workspaceName}`);
   };
 
@@ -182,7 +184,7 @@ function Dashboard() {
                     <Button
                       variant="outlined"
                       color="secondary"
-                      onClick={() => handleVisitWorkspace(workspace.projectId)}
+                      onClick={() => handleVisitWorkspace(workspace.projectId, workspace.version)}
                     >
                       Visit
                     </Button>
